@@ -1,5 +1,6 @@
 <?php
 
+
 // get $url variable
 include_once ("geturl.php");
 
@@ -40,17 +41,17 @@ require_once ("parcer/phpQuery/phpQuery.php");
 <body>
 <div id="tabs">
   <ul>
-    <li><a href="#tabs-1">Nunc tincidunt</a></li>
-    <li><a href="#tabs-2">Organic categories</a></li>
-    
+    <li><a href="#tabs-1">Organic categories</a></li>
+    <li><a href="#tabs-2">Technical tree</a></li>    
   </ul>
+  
   <div id="tabs-1">
-    <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
-  </div>
-  <div id="tabs-2">
     <?php
-  $i = 0;
+  // tree of the categories
+    $realCategories = array();
 
+
+  $i = 0;
     foreach ($elements as $element){
         print "<hr>";
         
@@ -60,7 +61,7 @@ require_once ("parcer/phpQuery/phpQuery.php");
         $title = preg_replace('/\t+/', '', $title);
         $title = preg_replace('/^\h*\v+/m', '', $title);
         
-    echo ' <strong>' . $title . ':</strong> <br>';  
+        echo ' <strong>' . $title . ':</strong> <br>';  
         // subcategories
         $categorySubSections = pq($element)->find('.textContainer a');
 
@@ -70,17 +71,29 @@ require_once ("parcer/phpQuery/phpQuery.php");
             $subCategoryTitle = pq($subCategories)->text();
             $subCategoryURL = pq($subCategories)->attr('href');
             // explode of url
-            $ulr = basename(dirname( $subCategoryURL));
+            $parentName = basename(dirname( $subCategoryURL));
+            $currentName = basename( $subCategoryURL);
 
-            echo '<li><strong>name:</strong> ' . $subCategoryURL . ':<br>
-            <strong>TechName of parent category:</strong>(' .$url .')<br> 
-            <strong>url</strong>: '.$url.'
+            echo '<li><strong>name:</strong> ' . $subCategoryTitle . ':<br>
+            <strong>TechName of parent category:</strong>(' .$parentName .')<br> 
+            <strong>TechName of current category:</strong>(' .$currentName .')<br> 
+            <strong>url</strong>: '.$subCategoryURL.'
             </li>';
+            // adding category to real tree
+            $realCategories[$parentName][$currentName] = array($subCategoryTitle, $subCategoryURL);
 
         }
        echo '</ul>';
 }
 ?>    
+  </div>
+  <div id="tabs-2">
+    <?php
+    echo "Count of the categoryes:" . count($realCategories);
+    echo '<pre>';
+    print_r($realCategories);
+    echo '</pre>';
+    ?>
   </div>
 </div>
 
