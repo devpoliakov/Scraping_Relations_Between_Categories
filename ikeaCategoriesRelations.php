@@ -69,14 +69,21 @@ require_once ("parcer/phpQuery/phpQuery.php");
         echo '<ul>';
         foreach ($categorySubSections as $subCategories){
             $subCategoryTitle = pq($subCategories)->text();
+            $subCategoryTitle = preg_replace('/\t+/', '', $subCategoryTitle);
+            $subCategoryTitle = preg_replace('/^\h*\v+/m', '', $subCategoryTitle);
+
             $subCategoryURL = pq($subCategories)->attr('href');
             // explode of url
             $parentName = basename(dirname( $subCategoryURL));
             $currentName = basename( $subCategoryURL);
 
-            echo '<li><strong>name:</strong> ' . $subCategoryTitle . ':<br>
+            /*
             <strong>TechName of parent category:</strong>(' .$parentName .')<br> 
             <strong>TechName of current category:</strong>(' .$currentName .')<br> 
+            */
+
+            echo '<li><strong>name:</strong> ' . $subCategoryTitle . ':<br>
+            
             <strong>url</strong>: '.$subCategoryURL.'
             </li>';
             // adding category to real tree
@@ -89,11 +96,18 @@ require_once ("parcer/phpQuery/phpQuery.php");
   </div>
   <div id="tabs-2">
     <?php
-    echo "Count of the categoryes:" . count($realCategories);
-    echo '<pre>';
-    print_r($realCategories);
-    echo '</pre>';
-    ?>
+    
+
+    foreach ($realCategories as $subKey => $subValue) {
+      echo "<b>Subcategory:</b>" . $subKey . "<br>";
+      echo "<ul>";
+      foreach ($subValue as $sub2key => $sub2value) {
+        echo "<li><b>name:</b> " . $sub2value[0] . "<br>" .
+        "<b>url of subcat:</b> " . $sub2value[1] . "</li>";
+      }
+      echo "</ul>";
+    }
+?>
   </div>
 </div>
 
