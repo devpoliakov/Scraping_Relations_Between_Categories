@@ -1,35 +1,55 @@
 <?php
-include_once ("configGrabber.php");
-#include_once ("functions.php");
 
-//$url = "https://news.google.com.ua";
-$url = "http://www.ikea.com/us/en/catalog/allproducts/";
+// get $url variable
+include_once ("geturl.php");
 
 $ch = curl_init();
 
-// 2. указываем параметры, включая url
+// parameters for url
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_HEADER, 0);
 
-// 3. получаем HTML в качестве результата
+// get html as result
 $output = curl_exec($ch);
 
-// 4. закрываем соединение
+// close connection
 curl_close($ch);
 
 
 require_once ("parcer/phpQuery/phpQuery.php");
 
-
-
-    // Инициализируем библиотеку
+// initialisation of the library
     $results = phpQuery::newDocument($output);
     $elements = $results->find('.productCategoryContainer  ');
+
+?><html>
+<head>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Categories of the resource</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#tabs" ).tabs();
+  } );
+  </script>
+</head>
+<body>
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Nunc tincidunt</a></li>
+    <li><a href="#tabs-2">Organic categories</a></li>
     
-    // А вот в цикле мы можем залезть внутрь любого объекта
-    
-    $i = 0;
+  </ul>
+  <div id="tabs-1">
+    <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+  </div>
+  <div id="tabs-2">
+    <?php
+  $i = 0;
 
     foreach ($elements as $element){
         print "<hr>";
@@ -50,23 +70,19 @@ require_once ("parcer/phpQuery/phpQuery.php");
             $subCategoryTitle = pq($subCategories)->text();
             $subCategoryURL = pq($subCategories)->attr('href');
             // explode of url
-            $url = basename(dirname( $subCategoryURL));
+            $ulr = basename(dirname( $subCategoryURL));
 
-            echo '<li><strong>name:</strong> ' . $subCategoryTitle . ':<br>
+            echo '<li><strong>name:</strong> ' . $subCategoryURL . ':<br>
             <strong>TechName of parent category:</strong>(' .$url .')<br> 
-            
+            <strong>url</strong>: '.$url.'
             </li>';
-            #<strong>url of category:</strong>' . $subCategoryURL . '
+
         }
        echo '</ul>';
-
-    //mysql_query ($query_insert);
-        
-             
-
 }
+?>    
+  </div>
+</div>
 
-
-
-include_once ("version.php");
-?>
+</body>
+</html>
